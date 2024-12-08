@@ -134,7 +134,7 @@ void setup() {
   delay(100);
 
   pinMode(tiltPin, INPUT);		// set sensor pin as an INPUT pin
-	digitalWrite(tiltPin, HIGH);	// turn on the built in pull-up resistor
+  digitalWrite(tiltPin, HIGH);	// turn on the built in pull-up resistor
 
   TB.neopixelPin = PIN_NEOPIXEL;
   TB.neopixelNum = 1; 
@@ -182,7 +182,7 @@ uint8_t j = 0;
 void loop() {
 
   if (digitalRead(tiltPin)) { // check if the pin is high
-		 Serial.println("**********************");
+    Serial.println("**********************");
 
     TB.printI2CBusScan();
 
@@ -290,7 +290,7 @@ void loop() {
 	else { // if tilt sensor is in "off" position, then we should turn off screen to save battery
     TB.printI2CBusScan();
 
-		canvas.fillScreen(ST77XX_BLACK);
+    canvas.fillScreen(ST77XX_BLACK);
     canvas.setTextColor(ST77XX_YELLOW);
     canvas.println("SLEEPING...");
 
