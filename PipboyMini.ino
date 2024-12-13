@@ -31,6 +31,7 @@ const int tiltPin = 5;		// tilt sensor pin is connected to pin 5 (change to whic
 
 String json_array;
 String weather;
+String fullWeather;
 String color;
 JSONVar weath;
 JSONVar temperature;
@@ -177,7 +178,7 @@ void tiltOFF(){
 }
 ////////////////////////////////////////
 // Main WatchFace
-void mainWatchface(String color){
+void mainWatch(String color){
   if (color=="main"){
     canvas.fillScreen(ST77XX_BLACK);
     canvas.setCursor(0, 17);
@@ -246,9 +247,22 @@ void mainWatchface(String color){
     digitalWrite(TFT_BACKLITE, HIGH);
   }
 }
-////////////////////////////////////////
-// Binary Watch Logic
-void printBinary(){
+//////////////////////////////////////
+// Binary Watchface
+void binaryWatch(String color){
+  
+  if (color=="main"){
+    canvas.fillScreen(ST77XX_BLACK);
+  }
+  else if (color=="green"){
+    canvas.fillScreen(0x0200);
+  }
+
+  // finish it up and turn on backlight
+  display.drawRGBBitmap(0, 0, canvas.getBuffer(), 240, 135);
+  pinMode(TFT_BACKLITE, OUTPUT);
+  digitalWrite(TFT_BACKLITE, HIGH);
+
   struct tm timeinfo;
   if(!getLocalTime(&timeinfo)){
     Serial.println("Failed to obtain time");
@@ -262,292 +276,407 @@ void printBinary(){
     hour = hour - 12; // convert military time to standard time
   }
 
-  tenhour(hour);
-  onehour(hour);
-  twohour(hour);
-  fourhour(hour);
-  eighthour(hour);
+  tenhour(hour, color);
+  onehour(hour, color);
+  twohour(hour, color);
+  fourhour(hour, color);
+  eighthour(hour, color);
   
-  tenmin(min);
-  twentymin(min);
-  fourtymin(min);
+  tenmin(min, color);
+  twentymin(min, color);
+  fourtymin(min, color);
 
   // get first min digit
   if (min>=10){
     min = (min)%10;
   }
 
-  onemin(min);
-  twomin(min);
-  fourmin(min);
-  eightmin(min);
+  onemin(min, color);
+  twomin(min, color);
+  fourmin(min, color);
+  eightmin(min, color);
 
-  tensec(sec);
-  twentysec(sec);
-  fourtysec(sec);
+  tensec(sec, color);
+  twentysec(sec, color);
+  fourtysec(sec, color);
 
   // get first sec digit
   if (sec>=10){
     sec = (sec)%10;
   }
 
-  onesec(sec);
-  twosec(sec);
-  foursec(sec);
-  eightsec(sec);
+  onesec(sec, color);
+  twosec(sec, color);
+  foursec(sec, color);
+  eightsec(sec, color);
+
+  delay(1000);
 
 }
 ////////////////////////////////////////
 // Binary Watchface Functions
-void tenhour(int hour) {
-  uint16_t color = ST77XX_RED;
+void tenhour(int hour, String col) {
+  uint16_t blockcolor;
+  if (col=="main"){
+    blockcolor = ST77XX_RED;
+  }
+  else if (col=="green"){
+    blockcolor = ST77XX_GREEN;
+  }
   int x = 15;
   int y = display.height() - 30;
   int w = 25;
   int h = 25;
   if(hour>=10){
-    display.fillRoundRect(x, y, w, h, 5, color);
+    display.fillRoundRect(x, y, w, h, 5, blockcolor);
   } 
   else{
-    display.drawRoundRect(x, y, w, h, 5, color);
+    display.drawRoundRect(x, y, w, h, 5, blockcolor);
   }
 }
-void onehour(int hour) {
-  uint16_t color = ST77XX_RED;
+void onehour(int hour, String col) {
+  uint16_t blockcolor;
+  if (col=="main"){
+    blockcolor = ST77XX_RED;
+  }
+  else if (col=="green"){
+    blockcolor = ST77XX_GREEN;
+  }
   int x = 45;
   int y = display.height() - 30;
   int w = 25;
   int h = 25;
     if((hour==1) || (hour==3) || (hour==7) || (hour==9) || (hour==11)){
-      display.fillRoundRect(x, y, w, h, 5, color);
+      display.fillRoundRect(x, y, w, h, 5, blockcolor);
     } 
     else{
-      display.drawRoundRect(x, y, w, h, 5, color);
+      display.drawRoundRect(x, y, w, h, 5, blockcolor);
     }
 }
-void twohour(int hour) {
-  uint16_t color = ST77XX_RED;
+void twohour(int hour, String col) {
+  uint16_t blockcolor;
+  if (col=="main"){
+    blockcolor = ST77XX_RED;
+  }
+  else if (col=="green"){
+    blockcolor = ST77XX_GREEN;
+  }
   int x = 45;
   int y = display.height() - 60;
   int w = 25;
   int h = 25;
   if((hour==2) || (hour==3) || (hour==6) || (hour==7) || (hour==12)){
-    display.fillRoundRect(x, y, w, h, 5, color);
+    display.fillRoundRect(x, y, w, h, 5, blockcolor);
   } 
   else{
-    display.drawRoundRect(x, y, w, h, 5, color);
+    display.drawRoundRect(x, y, w, h, 5, blockcolor);
   }
 }
-void fourhour(int hour) {
-  uint16_t color = ST77XX_RED;
+void fourhour(int hour, String col) {
+  uint16_t blockcolor;
+  if (col=="main"){
+    blockcolor = ST77XX_RED;
+  }
+  else if (col=="green"){
+    blockcolor = ST77XX_GREEN;
+  }
   int x = 45;
   int y = display.height() - 90;
   int w = 25;
   int h = 25;
   if((hour==4) || (hour==5) || (hour==6) || (hour==7)){
-    display.fillRoundRect(x, y, w, h, 5, color);
+    display.fillRoundRect(x, y, w, h, 5, blockcolor);
   } 
   else{
-    display.drawRoundRect(x, y, w, h, 5, color);
+    display.drawRoundRect(x, y, w, h, 5, blockcolor);
   }
 }
-void eighthour(int hour) {
-  uint16_t color = ST77XX_RED;
+void eighthour(int hour, String col) {
+  uint16_t blockcolor;
+  if (col=="main"){
+    blockcolor = ST77XX_RED;
+  }
+  else if (col=="green"){
+    blockcolor = ST77XX_GREEN;
+  }
   int x = 45;
   int y = display.height() - 120;
   int w = 25;
   int h = 25;
   if((hour==8) || (hour==9)){
-    display.fillRoundRect(x, y, w, h, 5, color);
+    display.fillRoundRect(x, y, w, h, 5, blockcolor);
   } 
   else{
-    display.drawRoundRect(x, y, w, h, 5, color);
+    display.drawRoundRect(x, y, w, h, 5, blockcolor);
   }
 }
-void tenmin(int min) {
-  uint16_t color = ST77XX_BLUE;
+void tenmin(int min, String col) {
+  uint16_t blockcolor;
+  if (col=="main"){
+    blockcolor = ST77XX_BLUE;
+  }
+  else if (col=="green"){
+    blockcolor = ST77XX_GREEN;
+  }
   int x = 85;
   int y = display.height() - 30;
   int w = 25;
   int h = 25;
   if(((min>=10) && (min<20)) || ((min>=30) && (min<40)) || ((min>=50) && (min<60))){
-    display.fillRoundRect(x, y, w, h, 5, color);
+    display.fillRoundRect(x, y, w, h, 5, blockcolor);
   } 
   else{
-    display.drawRoundRect(x, y, w, h, 5, color);
+    display.drawRoundRect(x, y, w, h, 5, blockcolor);
   }
 }
-void twentymin(int min) {
-  uint16_t color = ST77XX_BLUE;
+void twentymin(int min, String col) {
+  uint16_t blockcolor;
+  if (col=="main"){
+    blockcolor = ST77XX_BLUE;
+  }
+  else if (col=="green"){
+    blockcolor = ST77XX_GREEN;
+  }
   int x = 85;
   int y = display.height() - 60;
   int w = 25;
   int h = 25;
   if(((min>=20) && (min<40)) || ((min>=30) && (min<40))){
-    display.fillRoundRect(x, y, w, h, 5, color);
+    display.fillRoundRect(x, y, w, h, 5, blockcolor);
   } 
   else{
-    display.drawRoundRect(x, y, w, h, 5, color);
+    display.drawRoundRect(x, y, w, h, 5, blockcolor);
   }
 }
-void fourtymin(int min) {
-  uint16_t color = ST77XX_BLUE;
+void fourtymin(int min, String col) {
+  uint16_t blockcolor;
+  if (col=="main"){
+    blockcolor = ST77XX_BLUE;
+  }
+  else if (col=="green"){
+    blockcolor = ST77XX_GREEN;
+  }
   int x = 85;
   int y = display.height() - 90;
   int w = 25;
   int h = 25;
   if(min>=40){
-    display.fillRoundRect(x, y, w, h, 5, color);
+    display.fillRoundRect(x, y, w, h, 5, blockcolor);
   } 
   else{
-    display.drawRoundRect(x, y, w, h, 5, color);
+    display.drawRoundRect(x, y, w, h, 5, blockcolor);
   }
 }
-void onemin(int min) {
-  uint16_t color = ST77XX_BLUE;
+void onemin(int min, String col) {
+  uint16_t blockcolor;
+  if (col=="main"){
+    blockcolor = ST77XX_BLUE;
+  }
+  else if (col=="green"){
+    blockcolor = ST77XX_GREEN;
+  }
   int x = 115;
   int y = display.height() - 30;
   int w = 25;
   int h = 25;
   if((min==1) || (min==3) || (min==5) || (min==7) || (min==9)){
-    display.fillRoundRect(x, y, w, h, 5, color);
+    display.fillRoundRect(x, y, w, h, 5, blockcolor);
   } 
   else{
-    display.drawRoundRect(x, y, w, h, 5, color);
+    display.drawRoundRect(x, y, w, h, 5, blockcolor);
   }
 }
-void twomin(int min) {
-  uint16_t color = ST77XX_BLUE;
+void twomin(int min, String col) {
+  uint16_t blockcolor;
+  if (col=="main"){
+    blockcolor = ST77XX_BLUE;
+  }
+  else if (col=="green"){
+    blockcolor = ST77XX_GREEN;
+  }
   int x = 115;
   int y = display.height() - 60;
   int w = 25;
   int h = 25;
   if((min==2) || (min==3) || (min==6) || (min==7)){
-    display.fillRoundRect(x, y, w, h, 5, color);
+    display.fillRoundRect(x, y, w, h, 5, blockcolor);
   } 
   else{
-    display.drawRoundRect(x, y, w, h, 5, color);
+    display.drawRoundRect(x, y, w, h, 5, blockcolor);
   }
 }
-void fourmin(int min) {
-  uint16_t color = ST77XX_BLUE;
+void fourmin(int min, String col) {
+  uint16_t blockcolor;
+  if (col=="main"){
+    blockcolor = ST77XX_BLUE;
+  }
+  else if (col=="green"){
+    blockcolor = ST77XX_GREEN;
+  }
   int x = 115;
   int y = display.height() - 90;
   int w = 25;
   int h = 25;
   if((min==4) || (min==5) || (min==6) || (min==7)){
-    display.fillRoundRect(x, y, w, h, 5, color);
+    display.fillRoundRect(x, y, w, h, 5, blockcolor);
   } 
   else{
-    display.drawRoundRect(x, y, w, h, 5, color);
+    display.drawRoundRect(x, y, w, h, 5, blockcolor);
   }
 }
-void eightmin(int min) {
-  uint16_t color = ST77XX_BLUE;
+void eightmin(int min, String col) {
+  uint16_t blockcolor;
+  if (col=="main"){
+    blockcolor = ST77XX_BLUE;
+  }
+  else if (col=="green"){
+    blockcolor = ST77XX_GREEN;
+  }
   int x = 115;
   int y = display.height() - 120;
   int w = 25;
   int h = 25;
   if((min==8) || (min==9)){
-    display.fillRoundRect(x, y, w, h, 5, color);
+    display.fillRoundRect(x, y, w, h, 5, blockcolor);
   } 
   else{
-    display.drawRoundRect(x, y, w, h, 5, color);
+    display.drawRoundRect(x, y, w, h, 5, blockcolor);
   }
 }
-void tensec(int sec) {
-  uint16_t color = ST77XX_MAGENTA;
-  int x = 150;
+void tensec(int sec, String col) {
+  uint16_t blockcolor;
+  if (col=="main"){
+  blockcolor = ST77XX_MAGENTA;
+  }
+  else if (col=="green"){
+    blockcolor = ST77XX_GREEN;
+  }
+  int x = 155;
   int y = display.height() - 30;
   int w = 25;
   int h = 25;
   if(((sec>=10) && (sec<20)) || ((sec>=30) && (sec<40)) || ((sec>=50) && (sec<60))){
-    display.fillRoundRect(x, y, w, h, 5, color);
+    display.fillRoundRect(x, y, w, h, 5, blockcolor);
   } 
   else{
-    display.drawRoundRect(x, y, w, h, 5, color);
+    display.drawRoundRect(x, y, w, h, 5, blockcolor);
   }
 }
-void twentysec(int sec) {
-  uint16_t color = ST77XX_MAGENTA;
-  int x = 150;
+void twentysec(int sec, String col) {
+  uint16_t blockcolor;
+  if (col=="main"){
+  blockcolor = ST77XX_MAGENTA;
+  }
+  else if (col=="green"){
+    blockcolor = ST77XX_GREEN;
+  }
+  int x = 155;
   int y = display.height() - 60;
   int w = 25;
   int h = 25;
   if(((sec>=20) && (sec<40)) || ((sec>=30) && (sec<40))){
-    display.fillRoundRect(x, y, w, h, 5, color);
+    display.fillRoundRect(x, y, w, h, 5, blockcolor);
   } 
   else{
-    display.drawRoundRect(x, y, w, h, 5, color);
+    display.drawRoundRect(x, y, w, h, 5, blockcolor);
   }
 }
-void fourtysec(int sec) {
-  uint16_t color = ST77XX_MAGENTA;
-  int x = 150;
+void fourtysec(int sec, String col) {
+  uint16_t blockcolor;
+  if (col=="main"){
+  blockcolor = ST77XX_MAGENTA;
+  }
+  else if (col=="green"){
+    blockcolor = ST77XX_GREEN;
+  }
+  int x = 155;
   int y = display.height() - 90;
   int w = 25;
   int h = 25;
   if(sec>=40){
-    display.fillRoundRect(x, y, w, h, 5, color);
+    display.fillRoundRect(x, y, w, h, 5, blockcolor);
   } 
   else{
-    display.drawRoundRect(x, y, w, h, 5, color);
+    display.drawRoundRect(x, y, w, h, 5, blockcolor);
   }
 }
-void onesec(int sec) {
-  uint16_t color = ST77XX_MAGENTA;
-  int x = 180;
+void onesec(int sec, String col) {
+  uint16_t blockcolor;
+  if (col=="main"){
+  blockcolor = ST77XX_MAGENTA;
+  }
+  else if (col=="green"){
+    blockcolor = ST77XX_GREEN;
+  }
+  int x = 185;
   int y = display.height() - 30;
   int w = 25;
   int h = 25;
   if((sec==1) || (sec==3) || (sec==5) || (sec==7) || (sec==9)){
-    display.fillRoundRect(x, y, w, h, 5, color);
+    display.fillRoundRect(x, y, w, h, 5, blockcolor);
   } 
   else{
-    display.drawRoundRect(x, y, w, h, 5, color);
+    display.drawRoundRect(x, y, w, h, 5, blockcolor);
   }
 }
-void twosec(int sec) {
-  uint16_t color = ST77XX_MAGENTA;
-  int x = 180;
+void twosec(int sec, String col) {
+  uint16_t blockcolor;
+  if (col=="main"){
+  blockcolor = ST77XX_MAGENTA;
+  }
+  else if (col=="green"){
+    blockcolor = ST77XX_GREEN;
+  }
+  int x = 185;
   int y = display.height() - 60;
   int w = 25;
   int h = 25;
   if((sec==2) || (sec==3) || (sec==6) || (sec==7)){
-    display.fillRoundRect(x, y, w, h, 5, color);
+    display.fillRoundRect(x, y, w, h, 5, blockcolor);
   } 
   else{
-    display.drawRoundRect(x, y, w, h, 5, color);
+    display.drawRoundRect(x, y, w, h, 5, blockcolor);
   }
 }
-void foursec(int sec) {
-  uint16_t color = ST77XX_MAGENTA;
-  int x = 180;
+void foursec(int sec, String col) {
+  uint16_t blockcolor;
+  if (col=="main"){
+  blockcolor = ST77XX_MAGENTA;
+  }
+  else if (col=="green"){
+    blockcolor = ST77XX_GREEN;
+  }
+  int x = 185;
   int y = display.height() - 90;
   int w = 25;
   int h = 25;
   if((sec==4) || (sec==5) || (sec==6) || (sec==7)){
-    display.fillRoundRect(x, y, w, h, 5, color);
+    display.fillRoundRect(x, y, w, h, 5, blockcolor);
   } 
   else{
-    display.drawRoundRect(x, y, w, h, 5, color);
+    display.drawRoundRect(x, y, w, h, 5, blockcolor);
   }
 }
-void eightsec(int sec) {
-  uint16_t color = ST77XX_MAGENTA;
-  int x = 180;
+void eightsec(int sec, String col) {
+  uint16_t blockcolor;
+  if (col=="main"){
+  blockcolor = ST77XX_MAGENTA;
+  }
+  else if (col=="green"){
+    blockcolor = ST77XX_GREEN;
+  }
+  int x = 185;
   int y = display.height() - 120;
   int w = 25;
   int h = 25;
   if((sec==8) || (sec==9)){
-    display.fillRoundRect(x, y, w, h, 5, color);
+    display.fillRoundRect(x, y, w, h, 5, blockcolor);
   } 
   else{
-    display.drawRoundRect(x, y, w, h, 5, color);
+    display.drawRoundRect(x, y, w, h, 5, blockcolor);
   }
 }
 ////////////////////////////////////////
-
 
 void setup() {
   Serial.begin(115200);
@@ -587,6 +716,8 @@ void setup() {
   delay(100);
 
   color = "main";
+  watchface = "main";
+  fullWeather = "off";
 
   pinMode(tiltPin, INPUT);		// set sensor pin as an INPUT pin
 	digitalWrite(tiltPin, HIGH);	// turn on the built in pull-up resistor
@@ -643,19 +774,35 @@ void loop() {
     TB.printI2CBusScan();
 
     if (j % 2 == 0) {
-      mainWatchface(color);
+      if (fullWeather=="on"){
+        displayWeather(color);
+      }
+      else if (watchface=="main"){
+        mainWatch(color);
+      }
+      else if (watchface=="binary"){
+        binaryWatch(color);
+      }
 
 /////////////////////////////////////////////////////////
-// BUTTONS
+///// BUTTONS
       Serial.println(digitalRead(0));
       Serial.println(digitalRead(1));
       Serial.println(digitalRead(2));
       
-      if (!digitalRead(0)) {
-        while(digitalRead(tiltPin)) {
-          displayWeather(color);
+      //////////////////////
+      // bottom right button
+      if (!digitalRead(0)) { // full weather display
+        if (fullWeather=="off"){
+          fullWeather = "on";
         }
+        else if (fullWeather=="on"){
+          fullWeather = "off";
+        }
+        delay(2000);
       }
+      //////////////////////
+      // middle right button
       if (digitalRead(1)) { // select color scheme
         if (color=="main"){
           color = "green";// pipboy green watchface
@@ -665,26 +812,20 @@ void loop() {
         }
         delay(2000);
       }
-      //////////////////////////////////////
-      // Binary Watchface
+      //////////////////////
+      // top right button
       if (digitalRead(2)) {
-        while(digitalRead(tiltPin)) {
-          canvas.fillScreen(ST77XX_BLACK);
-          
-          printBinary();
-          
-          // finish it up and turn on backlight
-          display.drawRGBBitmap(0, 0, canvas.getBuffer(), 240, 135);
-          pinMode(TFT_BACKLITE, OUTPUT);
-          digitalWrite(TFT_BACKLITE, HIGH);
-
-          TB.setColor(TB.Wheel(j++));
-          //delay(500);
+        if (watchface=="main"){
+          watchface = "binary";
+          fullWeather = "off";
         }
-        return;
+        else if (watchface=="binary"){
+          watchface = "main";
+          fullWeather = "off";
+        }
+        delay(2000);
       }
-      //////////////////////////////////////
-        
+      ////////////////////// 
 /////////////////////////////////////////////////////////
 
       // finish it up and turn on backlight
@@ -694,11 +835,10 @@ void loop() {
     }
     
     TB.setColor(TB.Wheel(j++));
-    delay(10);
     return;
     }
 
 	else { // if tilt sensor is in "off" position, then we should turn off screen
-    		tiltOFF();
+    tiltOFF();
 	}
 }
